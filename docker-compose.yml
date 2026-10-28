@@ -1,0 +1,43 @@
+# JFrog Artifactory OSS (free) + PostgreSQL.
+# Recent Artifactory versions refuse to start without PostgreSQL, so both run together.
+#
+#   cd artifactory && docker compose up -d
+#   UI: http://<server-ip>:8082   (first login admin / password -> you are asked to change it)
+#
+# Needs about 4 GB RAM (EC2 t3.medium or bigger). Open port 8082 in the security group.
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: artifactory
+      POSTGRES_USER: artifactory
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-artifactory}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U artifactory -d artifactory"]
+      interval: 5s
+      retries: 20
+
+  artifactory:
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      JF_SHARED_DATABASE_TYPE: postgresql
+      JF_SHARED_DATABASE_DRIVER: org.postgresql.Driver
+      JF_SHARED_DATABASE_URL: jdbc:postgresql://postgres:5432/artifactory
+      JF_SHARED_DATABASE_USERNAME: artifactory
+      JF_SHARED_DATABASE_PASSWORD: ${DB_PASSWORD:-artifactory}
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+    volumes:
+      - artifactory_data:/var/opt/jfrog/artifactory
+
+volumes:
+  postgres_data:
+  artifactory_data:
