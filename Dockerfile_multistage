@@ -1,0 +1,10 @@
+FROM maven AS build
+WORKDIR /app
+COPY src /app/src
+COPY pom.xml /app
+RUN mvn clean package -DskipTests
+
+FROM tomcat
+WORKDIR /usr/local/tomcat
+RUN rm -rf webapps/ROOT
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war

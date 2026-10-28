@@ -1,0 +1,46 @@
+# Maven target directory
+/target/
+
+# Logs
+*.log
+
+# Compiled class files
+*.class
+
+# Maven specific files
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Eclipse
+.project
+.classpath
+.settings/
+*.launch
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# JMeter result and report directories (optional)
+**/jmeter/results/
+**/jmeter/report/
